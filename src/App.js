@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Weather from "./components/Weather";
 import WeatherBtn from "./components/WeatherBtn";
+import ClipLoader from "react-spinners/ClipLoader";
 
 function App() {
   const [weather, setWeather] = useState(null);
   const [city, setCity] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const cities = [
-    "Seoul",
     "Los Angeles",
     "New York",
     "Las Vegas",
     "Playa del Carmen",
     "Cancun",
   ];
+  // const [btn, clickBtn] = useState(false,true);
 
   const getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -28,8 +29,10 @@ function App() {
 
   const getWeatherByCurrentLocation = async (lat, lon) => {
     let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=83d39c03bab22f218e4d0ca7e1634476&units=metric&lang=kr`;
+    setLoading(true);
     let response = await fetch(url);
     let data = await response.json();
+    setLoading(false);
     console.log("data", data);
     setWeather(data);
   };
@@ -37,13 +40,15 @@ function App() {
   const getWeatherByCity = async () => {
     // setCity();
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=83d39c03bab22f218e4d0ca7e1634476&units=metric&lang=k`;
+    setLoading(true);
     let res = await fetch(url);
     let data = await res.json();
+    setLoading(false);
     setWeather(data);
   };
 
   useEffect(() => {
-    if (city === '') {
+    if (city === "") {
       getCurrentLocation();
     } else {
       getWeatherByCity();
@@ -51,12 +56,42 @@ function App() {
     }
   }, [city]);
 
+  const handleCityChange = (city) => {
+    if (city === "current") {
+      getCurrentLocation();
+      
+    } else {
+      setCity(city);
+    }
+  };
+
   return (
-    <div className="App container">
-      <div className="box">
-        <Weather weather={weather} />
-        <WeatherBtn cities={cities} setCity={setCity} setWeather={setWeather} />
-      </div>
+    <div className="App">
+      {/*loading-===true ? 로딩스피너 : 날씨box */}
+      {loading ? (
+        <div className="container">
+          <ClipLoader
+            color="#eaaa0a"
+            loading={loading}
+            // cssOverride={override}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      ) : (
+        <div className="container">
+          <div className="box">
+            <Weather weather={weather} />
+            <WeatherBtn
+              cities={cities}
+              city={city}
+              handleCityChange={handleCityChange}
+              selectedCity={city}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

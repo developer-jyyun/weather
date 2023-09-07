@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
-const WeatherBtn = ({ cities, setCity, setWeather }) => {
-  // console.log('cities:',cities)
+import React from "react";
 
+const WeatherBtn = ({ cities, selectedCity, handleCityChange }) => {
+  // console.log('cities:',cities)
 
   return (
     <div className="btn-area">
-      {cities.map((a, i) => (
-        <Button
-          variant="outline-warning"
+      <button
+        className={`city-btn ${selectedCity === null ? "act" : "city-btn"}`}
+        onClick={() => {
+          handleCityChange("current");
+        }}
+      >
+        현재위치
+      </button>
+      {cities.map((city, i) => (
+        <button
+          className={`city-btn ${selectedCity === city ? "act" : "city-btn"}`}
           key={i}
           onClick={() => {
-            setCity(a);
-            // getWeatherByCity(a);
+            handleCityChange(city);
           }}
         >
-          {a}
-        </Button>
+          {city}
+        </button>
       ))}
-
-      {/* <Button variant="outline-warning">현재위치</Button>{' '}
-      <Button variant="outline-warning">Los Angeles</Button>{' '}
-      <Button variant="outline-warning">New York</Button>{' '}
-      <Button variant="outline-warning">Las Vegas</Button>{' '}
-      <Button variant="outline-warning"> Playa del Carmen</Button>{' '}
-      <Button variant="outline-warning"> Cancun</Button>{' '} */}
     </div>
   );
 };
