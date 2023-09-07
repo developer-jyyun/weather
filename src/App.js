@@ -11,21 +11,12 @@ function App() {
   const [loading, setLoading] = useState(false);
   const cities = [
     "Los Angeles",
-    "New York",
     "Las Vegas",
     "Playa del Carmen",
     "Cancun",
+    "Seoul"
   ];
   // const [btn, clickBtn] = useState(false,true);
-
-  const getCurrentLocation = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      let lat = position.coords.latitude; //위도
-      let lon = position.coords.longitude; //경도
-      console.log("현재위치:", lat, lon); //현재위치: 37.6471552 127.0284288
-      getWeatherByCurrentLocation(lat, lon); //현재위치: 37.6471552 127.0284288
-    });
-  };
 
   const getWeatherByCurrentLocation = async (lat, lon) => {
     let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=83d39c03bab22f218e4d0ca7e1634476&units=metric&lang=kr`;
@@ -37,8 +28,16 @@ function App() {
     setWeather(data);
   };
 
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = position.coords.latitude; //위도
+      let lon = position.coords.longitude; //경도
+      console.log("현재위치:", lat, lon); //현재위치: 37.6471552 127.0284288
+      getWeatherByCurrentLocation(lat, lon); //현재위치: 37.6471552 127.0284288
+    });
+  };
+
   const getWeatherByCity = async () => {
-    // setCity();
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=83d39c03bab22f218e4d0ca7e1634476&units=metric&lang=k`;
     setLoading(true);
     let res = await fetch(url);
@@ -50,16 +49,16 @@ function App() {
   useEffect(() => {
     if (city === "") {
       getCurrentLocation();
-    } else {
+      } else {
       getWeatherByCity();
       console.log("city:", city);
     }
   }, [city]);
 
   const handleCityChange = (city) => {
-    if (city === "current") {
+    if (city === "current") {  
+      // setCity(null);
       getCurrentLocation();
-      
     } else {
       setCity(city);
     }
